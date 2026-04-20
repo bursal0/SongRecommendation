@@ -10,6 +10,10 @@ The system allows users to search for a song, select the correct match, and inst
 
 👉 [Live Application](https://songrecommendation-production.up.railway.app/)
 
+## 📸 Screenshot
+
+![App Screenshot](assets/screenshot.png)
+
 ---
 
 ## 📌 Features
