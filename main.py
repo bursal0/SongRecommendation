@@ -4,8 +4,11 @@ import pickle
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="frontend"), name="static")
 
 app.add_middleware(
     CORSMiddleware,
@@ -67,8 +70,8 @@ def recommend(song_index, top_n=5):
 # ROOT (TEST)
 # =========================
 @app.get("/")
-def home():
-    return {"message": "Music Recommendation API is running 🎧"}
+def serve_frontend():
+    return FileResponse("frontend/index.html")
 
 
 # =========================
