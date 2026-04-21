@@ -69,9 +69,12 @@ def get_spotify_token():
     client_id = os.getenv("SPOTIFY_CLIENT_ID")
     client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
 
+    if not client_id or not client_secret:
+        print("❌ Spotify ENV missing")
+        return None
+
     auth_string = f"{client_id}:{client_secret}"
-    auth_bytes = auth_string.encode("utf-8")
-    auth_base64 = base64.b64encode(auth_bytes).decode("utf-8")
+    auth_base64 = base64.b64encode(auth_string.encode()).decode()
 
     url = "https://accounts.spotify.com/api/token"
 
@@ -83,21 +86,29 @@ def get_spotify_token():
         "grant_type": "client_credentials"
     }
 
-    result = requests.post(url, headers=headers, data=data, timeout=5)
+    result = requests.post(url, headers=headers, data=data)
+
+    if result.status_code != 200:
+        print("❌ Token error:", result.text)
+        return None
+
     json_result = result.json()
 
-    spotify_token = json_result["access_token"]
-    spotify_token_expires = time.time() + json_result["expires_in"]
+    spotify_token = json_result.get("access_token")
+    spotify_token_expires = time.time() + json_result.get("expires_in", 3600)
 
     return spotify_token
 
 def get_album_cover(track_name, artist):
     key = f"{track_name.lower()}_{artist.lower()}"
+    print("data")
 
     if key in cover_cache:
         return cover_cache[key]
 
     token = get_spotify_token()
+    if not token:
+        return "https://via.placeholder.com/300?text=No+Image"
 
     query = urllib.parse.quote(f"{track_name} {artist}")
     url = f"https://api.spotify.com/v1/search?q={query}&type=track&limit=1"
