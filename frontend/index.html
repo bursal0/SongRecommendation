@@ -205,13 +205,19 @@
       }
 
       .song-thumb {
-  width: 100%;
-  aspect-ratio: 1;
-  background: linear-gradient(135deg, #282828 0%, #121212 100%);
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-}
+        width: 100%;
+        aspect-ratio: 1;
+        background: linear-gradient(135deg, #282828 0%, #121212 100%);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+       }
+      .song-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
 
       .song-info {
         display: flex;
@@ -449,8 +455,7 @@
         card.innerHTML = `
           <div class="song-thumb">
   ${song.image ? `
-    <img src="${song.image}"
-         style="width:100%; height:100%; object-fit:cover; border-radius:10px;">
+   <img src="${song.image}" referrerpolicy="no-referrer">
   ` : `
     <svg width="32" height="32" viewBox="0 0 24 24" fill="rgba(255,255,255,0.1)">
       <path d="M9 18V5l12-2v13"/>
