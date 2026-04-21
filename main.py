@@ -101,7 +101,6 @@ def get_spotify_token():
 
 def get_album_cover(track_name, artist):
     key = f"{track_name.lower()}_{artist.lower()}"
-    print("data")
 
     if key in cover_cache:
         return cover_cache[key]
@@ -110,22 +109,35 @@ def get_album_cover(track_name, artist):
     if not token:
         return "https://via.placeholder.com/300?text=No+Image"
 
-    query = urllib.parse.quote(f"{track_name} {artist}")
+    artist_clean = artist.split(";")[0]
+
+    query = urllib.parse.quote(f"{track_name} {artist_clean}")
     url = f"https://api.spotify.com/v1/search?q={query}&type=track&limit=1"
 
     headers = {
         "Authorization": f"Bearer {token}"
     }
 
-    response = requests.get(url, headers=headers, timeout=5)
+    response = requests.get(url, headers=headers)
     data = response.json()
 
+    print("SPOTIFY RESPONSE:", data)  # 🔥 DEBUG
+
     try:
-        image = data["tracks"]["items"][0]["album"]["images"][0]["url"]
+        items = data.get("tracks", {}).get("items", [])
+        if not items:
+            raise Exception("No track")
+
+        images = items[0]["album"].get("images", [])
+        if not images:
+            raise Exception("No image")
+
+        image = images[0]["url"]
         cover_cache[key] = image
         return image
+
     except:
-        return "https://via.placeholder.com/300"
+        return "https://via.placeholder.com/300?text=No+Image"
 
 
 
